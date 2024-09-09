@@ -23,10 +23,10 @@
         "dist"
     ],
     "main": "dist/index.js",
-    "module": "dist/index.es.js",
+    "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "rimraf dist && vite build",
+        "build": "rimraf dist && tsup src/index.ts --dts --format esm,cjs",
         "format": "prettier --write '**/*.{js,md,json,yaml,yml}'",
         "lint": "eslint --fix '**/*.ts'",
         "test": "vitest run",
@@ -55,6 +55,7 @@
         "prettier": "^3.1.1",
         "rimraf": "^5.0.5",
         "ts-node": "^10.9.2",
+        "tsup": "^8.2.4",
         "type-fest": "^4.8.3",
         "typescript": "^5.3.3",
         "vite": "^5.0.7",
