@@ -47,5 +47,5 @@ export function getCacheTTL({
     if (parseHeaders) {
         return parseCacheControlHeader(response);
     }
-    return null;
+    return defaultTTL || null;
 }

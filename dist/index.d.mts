@@ -40,6 +40,7 @@ interface AxiosCacheOptions {
     logger?: CacheLogger;
     parseHeaders?: boolean;
     storage?: AxiosCacheStorage;
+    methods?: string[];
 }
 interface AxiosCacheObject {
     expiration: number;
@@ -52,6 +53,6 @@ interface AxiosCacheAdapter extends AxiosAdapter {
     (config: AxiosCacheRequestConfig): AxiosPromise;
 }
 
-declare function createCacheAdapter({ debug, parseHeaders, logger, storage, defaultTTL, }?: AxiosCacheOptions): AxiosCacheAdapter;
+declare function createCacheAdapter({ debug, parseHeaders, logger, storage, defaultTTL, methods, }?: AxiosCacheOptions): AxiosCacheAdapter;
 
 export { type AsyncCacheManagerLikeCache, type AsyncMapLikeCache, type AsyncStorageLikeCache, type AxiosCacheAdapter, type AxiosCacheObject, type AxiosCacheOptions, type AxiosCacheRequestConfig, type AxiosCacheStorage, type CacheLogger, type CacheManagerLikeCache, type MapLikeCache, type StorageLikeCache, createCacheAdapter };

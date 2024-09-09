@@ -139,7 +139,7 @@ function getCacheTTL({
   if (parseHeaders) {
     return parseCacheControlHeader(response);
   }
-  return null;
+  return defaultTTL || null;
 }
 
 // src/adapter.ts
@@ -148,16 +148,17 @@ function createCacheAdapter({
   parseHeaders = false,
   logger = console,
   storage,
-  defaultTTL
+  defaultTTL,
+  methods
 } = {}) {
   const cache = new CacheService(storage);
   const adapter = (0, import_axios.getAdapter)(
     typeof XMLHttpRequest === "undefined" ? "http" : "xhr"
   );
   return async function(config) {
-    const isGetRequest = config.method?.toLowerCase() === "get";
-    const url = import_axios.default.getUri(config);
-    const cachedResponse = isGetRequest ? await cache.get(url) : null;
+    const isCachingRequest = methods && config.method ? methods.includes(config.method?.toLowerCase()) : config.method?.toLowerCase() === "get";
+    const url = import_axios.default.getUri(config) + (config.data || "");
+    const cachedResponse = isCachingRequest ? await cache.get(url) : null;
     if (cachedResponse) {
       if (debug) {
         const msg = `[axios-cache] serving cached response for url: ${url}`;
@@ -175,7 +176,7 @@ function createCacheAdapter({
       parseHeaders,
       response
     });
-    if (isGetRequest && ttl) {
+    if (isCachingRequest && ttl) {
       if (debug) {
         const msg = `[axios-cache] caching response for url: ${url} with TTL: ${ttl}`;
         logger.log(msg);

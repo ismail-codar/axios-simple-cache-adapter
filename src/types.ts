@@ -54,6 +54,7 @@ export interface AxiosCacheOptions {
     logger?: CacheLogger;
     parseHeaders?: boolean;
     storage?: AxiosCacheStorage;
+    methods?: string[];
 }
 
 export interface AxiosCacheObject {

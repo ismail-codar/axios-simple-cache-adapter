@@ -14,6 +14,7 @@ export function createCacheAdapter({
     logger = console,
     storage,
     defaultTTL,
+    methods,
 }: AxiosCacheOptions = {}): AxiosCacheAdapter {
     const cache = new CacheService(storage);
     const adapter = getAdapter(
@@ -23,10 +24,13 @@ export function createCacheAdapter({
     return async function (
         config: AxiosCacheRequestConfig,
     ): Promise<AxiosResponse> {
-        const isGetRequest = config.method?.toLowerCase() === 'get';
-        const url = axios.getUri(config);
+        const isCachingRequest =
+            methods && config.method
+                ? methods.includes(config.method?.toLowerCase())
+                : config.method?.toLowerCase() === 'get';
+        const url = axios.getUri(config) + (config.data || '');
 
-        const cachedResponse = isGetRequest ? await cache.get(url) : null;
+        const cachedResponse = isCachingRequest ? await cache.get(url) : null;
         if (cachedResponse) {
             if (debug) {
                 const msg = `[axios-cache] serving cached response for url: ${url}`;
@@ -47,7 +51,7 @@ export function createCacheAdapter({
             response,
         });
 
-        if (isGetRequest && ttl) {
+        if (isCachingRequest && ttl) {
             if (debug) {
                 const msg = `[axios-cache] caching response for url: ${url} with TTL: ${ttl}`;
                 logger.log(msg);
